@@ -1,0 +1,14 @@
+server {
+listen {{ ansible_default_ipv4.address }}:{{ port_nginx }};
+
+server_name 95.217.167.44;
+
+root /var/www/web/;
+index index.htm index.html index.html.j2;
+
+location / {
+ return 200 "OKA";
+ root /usr/share/nginx/html;
+ index index.htm index.html;
+}
+}

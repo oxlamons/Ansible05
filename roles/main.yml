@@ -1,0 +1,6 @@
+---
+- hosts: dev
+  gather_facts: yes
+
+  roles:
+    - { role: deploy_nginx, when: ansible_system == "Debian" }

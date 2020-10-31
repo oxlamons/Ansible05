@@ -1,0 +1,38 @@
+---
+# tasks file for deploy_nginx
+- name: Install Python 2.x
+  raw: test -e /usr/bin/python || (apt update && apt install -y python-simplejson)
+  register: test
+  changed_when: test.stdout
+
+- name: Install nginx on ansible_ubuntu
+  apt: allow_unauthenticated=yes name=nginx state=latest
+  become: yes
+
+- name: Removind default config
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx
+
+- name: Install nginx configuration
+  template: src=ansible.srwx.net.conf.j2 dest={{ destin_folder }}/ansible.srwx.net.conf owner=root group=root mode=0644
+
+- name: Create index.html file
+  template: src=index.html dest=/etc/nginx/sites-enabled/ansible.srwx.net.conf owner=root group=root mode=0644
+
+  when: ansible_os_family == "Ubuntu"
+- debug: msg={{ansible_default_ipv4}}
+
+- name: Install nginx on ansible_CentOS
+  yum: allow_unauthenticated=yes name=nginx state=present
+  become: yes
+
+- name: Removind default config
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx
+
+- name: Install nginx configuration
+  template: src=ansible.srwx.net.conf.j2 dest=/etc/nginx/sites-enabled/ansible.srwx.net.conf owner=root group=root mode=0644
+  when: ansible_os_family == "CentOS"
+
+- name: Create index.html file
+  template: src=index.html  dest={{ destin_index }} owner=root group=root mode=0644
